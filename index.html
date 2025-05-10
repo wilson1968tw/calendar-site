@@ -2,12 +2,22 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>客製化行事曆</title>
+  <title>辭修高中行事曆</title>
   <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
     #legend {
-      margin-bottom: 20px;
+      margin: 20px auto;
+      max-width: 900px;
+      padding: 10px;
     }
     .legend-item {
       display: inline-block;
@@ -20,30 +30,51 @@
       vertical-align: middle;
       margin-right: 5px;
     }
+    #calendar {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
-  <h2>圖例與行事曆範例</h2>
+  <h2>新北辭修高中行事曆</h2>
   <div id="legend">
+    <div class="legend-item"><span class="legend-color" style="background-color:#2780e3;"></span>一般活動</div>
     <div class="legend-item"><span class="legend-color" style="background-color:#f00;"></span>重要會議</div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#0a0;"></span>研討會</div>
-    <div class="legend-item"><span class="legend-color" style="background-color:#00f;"></span>圖書館活動</div>
+    <div class="legend-item"><span class="legend-color" style="background-color:#0a0;"></span>校內演講</div>
   </div>
-
   <div id='calendar'></div>
 
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/zh-tw.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/google-calendar.min.js'></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var calendarEl = document.getElementById('calendar');
       var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'zh-tw',
-        events: [
-          { title: '圖書館導覽', start: '2025-05-15', color: '#00f' },
-          { title: '研究發表會', start: '2025-05-18', color: '#0a0' },
-          { title: '行政會議', start: '2025-05-21', color: '#f00' }
-        ]
+        googleCalendarApiKey: 'AIzaSyAHNgQRDPaSjms5TJGJ8RS26pjgy49ugfY',
+        events: {
+          googleCalendarId: 'calendar@tsshs.ntpc.edu.tw',
+          className: 'gcal-event',
+          color: '#2780e3'
+        },
+        eventClick: function(info) {
+          info.jsEvent.preventDefault();
+          const title = info.event.title;
+          const time = info.event.start.toLocaleString('zh-TW');
+          const url = info.event.url || '';
+          const content = `活動：${title}\n時間：${time}`;
+          if (confirm(content + (url ? "\n\n是否前往連結？" : ""))) {
+            if (url) window.open(url, '_blank');
+          }
+        }
       });
       calendar.render();
     });
